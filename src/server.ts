@@ -1,7 +1,10 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
+import dotenv from 'dotenv';
+
 import { FlipN } from './flipN';
 
+dotenv.config();    
 const app = express();
 
 // Swagger documentation
@@ -677,8 +680,10 @@ app.get('/checkPrePaid', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`Swagger documentation available at http://localhost:${PORT}/api-docs`);
 }); 
+
+console.log(process.env.hello);
