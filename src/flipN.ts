@@ -4,9 +4,10 @@ import {
     Transaction,
     ComputeBudgetProgram,
     Connection,
-    TransactionInstruction
+    TransactionInstruction,
 } from "@solana/web3.js";
 import Big from "big.js";
+import { Metaplex } from "@metaplex-foundation/js";
 import {
     getOrCreateAssociatedTokenAccount,
     getAssociatedTokenAddressSync,
@@ -20,22 +21,35 @@ import {
     createSyncNativeInstruction,
     transfer,
     createTransferInstruction,
-    createCloseAccountInstruction
+    createCloseAccountInstruction,
+    getAssociatedTokenAddress,
+    getTokenMetadata,
+    TOKEN_2022_PROGRAM_ID,
+    getMint
 } from "@solana/spl-token";
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { setGlobalDispatcher, ProxyAgent } from 'undici';
 
+
+import dotenv from 'dotenv';
+
+dotenv.config();    
+
 import idl from "./idl/meme_launchpad.json";
 
-const programId_address = '6LDad2GqEzvdCRA6DzTfqgRQGjFrQKndzdtRX6HEcTBf'
-const rpc = 'https://solana-mainnet.core.chainstack.com/26539386617197b730ed9e3c81b611df'
-const referral_address = 'EEYm1sXVhH1EpsUan6Sj31zdydALoAVCEYdVncJQJ8s6'
+const programId_address = process.env.PROGRAM_ID || ''
+const rpc = process.env.RPC || 'https://solana-mainnet.core.chainstack.com/26539386617197b730ed9e3c81b611df'
+const referral_address = process.env.referral_address || 'EEYm1sXVhH1EpsUan6Sj31zdydALoAVCEYdVncJQJ8s6'
 const proxy_address = '8GBcwJAfUU9noxPNh5jnfwkKipK8XRHUPS5va9TAXr5f'
 const total_supply = 1000000000
 
-const httpDispatcher = new ProxyAgent({ uri: "http://127.0.0.1:4780" });
-setGlobalDispatcher(httpDispatcher);
+console.log('programId_address', programId_address, rpc)
+
+if (process.env.IS_LOCAL) {
+    const httpDispatcher = new ProxyAgent({ uri: "http://127.0.0.1:4780" });
+    setGlobalDispatcher(httpDispatcher);
+}
 
 export class FlipN {
     static programId: PublicKey = new PublicKey(programId_address);
@@ -50,30 +64,66 @@ export class FlipN {
         fetch: fetch
     })
 
+    // @ts-ignore
     owner: PublicKey;
+    // @ts-ignore
     tokenName: string;
+    // @ts-ignore
     tokenSymbol: string;
+    // @ts-ignore
     tokenDecimals: number;
+    // @ts-ignore
     icon?: string;
+    // @ts-ignore
     referral: PublicKey = new PublicKey(referral_address);
+    // @ts-ignore
     program: Program<any>;
+    // @ts-ignore
     pool: PublicKey;
+    // @ts-ignore
     tokenInfo: PublicKey;
+    // @ts-ignore
+    tokenAddress: PublicKey | null = null;
 
-    constructor({
+    constructor() {}
+
+    async init({
         owner,
         tokenName,
         tokenSymbol,
         tokenDecimals,
+        tokenAddress,
         icon,
         referralAddress
-    }: { owner: string, tokenName: string, tokenSymbol: string, tokenDecimals: number, icon?: string, referralAddress?: string }) {
+    }: { owner: string, tokenName?: string, tokenSymbol?: string, tokenDecimals?: number, tokenAddress?: string, icon?: string, referralAddress?: string }) {
         this.owner = new PublicKey(owner)
-        this.tokenName = tokenName
-        this.tokenSymbol = tokenSymbol
-        this.tokenDecimals = tokenDecimals
-        this.icon = icon
+        if (tokenAddress) {
+            this.tokenAddress = new PublicKey(tokenAddress)
+            const metaplex = Metaplex.make(FlipN.connection);
+            const metadataAccount = await metaplex
+                .nfts()
+                .findByMint({ mintAddress: this.tokenAddress });
+    
+            if (!metadataAccount) {
+                throw 'metadataAccount not found'
+            }
 
+            this.tokenName = metadataAccount.name
+            this.tokenSymbol = metadataAccount.symbol
+            this.tokenDecimals = metadataAccount.mint.decimals
+            this.icon = metadataAccount.uri
+
+        } else {
+            if (!tokenName || !tokenSymbol || !tokenDecimals || !icon) {
+                throw 'tokenName, tokenSymbol, tokenDecimals and icon are required'
+            }
+            this.tokenName = tokenName
+            this.tokenSymbol = tokenSymbol
+            this.tokenDecimals = tokenDecimals
+            this.icon = icon
+        }
+        
+        
         this.program = new Program<any>(idl, FlipN.programId, {
             connection: FlipN.connection
         } as any);
@@ -86,8 +136,8 @@ export class FlipN {
             [
                 Buffer.from("token_info"),
                 FlipN.state.toBuffer(),
-                Buffer.from(tokenName),
-                Buffer.from(tokenSymbol)
+                Buffer.from(this.tokenName),
+                Buffer.from(this.tokenSymbol)
             ],
             FlipN.programId
         )[0]
@@ -96,8 +146,8 @@ export class FlipN {
             [
                 Buffer.from("mint"),
                 FlipN.state.toBuffer(),
-                Buffer.from(tokenName),
-                Buffer.from(tokenSymbol)
+                Buffer.from(this.tokenName),
+                Buffer.from(this.tokenSymbol)
             ],
             FlipN.programId
         )[0]
@@ -520,6 +570,29 @@ export class FlipN {
         transaction.recentBlockhash = latestBlockhash!.blockhash;
 
         return transaction.serialize({ verifySignatures: false }).toString("base64");
+    }
+
+    async estimate(inNumber: number, inType: 'sol' | 'token') {
+        const poolData: any = await this.program.account.pool.fetch(this.pool);
+        const poolToken = new Big(poolData!.virtualTokenAmount.toNumber());
+        const solToken = new Big(poolData!.virtualWsolAmount.toNumber());
+        if (inType === 'sol') {
+            const _solAmount = new Big(inNumber).mul(1 - 0.01);
+            const result = poolToken
+            .mul(_solAmount)
+            .div(solToken.plus(_solAmount))
+            .toString();
+            return result;
+        } else {
+            const _tokenAmount = new Big(inNumber).mul(1 - 0.015);
+            const result = solToken
+              .mul(_tokenAmount)
+              .div(poolToken.plus(_tokenAmount))
+              .toString();
+            return result;
+        }
+
+        return 0
     }
 
     private async getTradeKeysAndInstructions() {
