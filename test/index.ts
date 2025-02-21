@@ -18,8 +18,6 @@ async function test() {
         commitment: 'confirmed'
     })
 
-    console.log(process.env.PRIVATE_KEY)
-  
     const privateKeyString = process.env.PRIVATE_KEY || '';
     const sender = Keypair.fromSecretKey(bs58.decode(privateKeyString));
 

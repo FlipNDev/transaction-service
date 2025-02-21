@@ -33,42 +33,11 @@ export const swagger = {
                     {
                         name: 'tokenAddress',
                         in: 'query',
+                        required: true,
                         schema: {
                             type: 'string'
                         },
                         description: 'Token contract address'
-                    },
-                    {
-                        name: 'tokenName',
-                        in: 'query',
-                        schema: {
-                            type: 'string'
-                        },
-                        description: 'Token name (optional)'
-                    },
-                    {
-                        name: 'tokenSymbol',
-                        in: 'query',
-                        schema: {
-                            type: 'string'
-                        },
-                        description: 'Token symbol (optional)'
-                    },
-                    {
-                        name: 'tokenDecimals',
-                        in: 'query',
-                        schema: {
-                            type: 'integer'
-                        },
-                        description: 'Token decimals (optional)'
-                    },
-                    {
-                        name: 'icon',
-                        in: 'query',
-                        schema: {
-                            type: 'string'
-                        },
-                        description: 'Token icon URL (optional)'
                     },
                     {
                         name: 'referralAddress',
@@ -79,52 +48,13 @@ export const swagger = {
                         description: 'Referral address (optional)'
                     },
                     {
-                        name: 'outputAmount',
+                        name: 'params',
                         in: 'query',
-                        schema: {
-                            type: 'number'
-                        },
-                        description: 'Output amount for FLIP_N mode'
-                    },
-                    {
-                        name: 'maxWsolAmount',
-                        in: 'query',
-                        schema: {
-                            type: 'number'
-                        },
-                        description: 'Maximum WSOL amount for FLIP_N mode'
-                    },
-                    {
-                        name: 'solIn',
-                        in: 'query',
-                        schema: {
-                            type: 'number'
-                        },
-                        description: 'SOL input amount for PUMP mode'
-                    },
-                    {
-                        name: 'slip',
-                        in: 'query',
-                        schema: {
-                            type: 'number'
-                        },
-                        description: 'Slippage tolerance'
-                    },
-                    {
-                        name: 'amount',
-                        in: 'query',
-                        schema: {
-                            type: 'number'
-                        },
-                        description: 'Amount for Jupiter mode'
-                    },
-                    {
-                        name: 'tradeType',
-                        in: 'query',
+                        required: true,
                         schema: {
                             type: 'string'
                         },
-                        description: 'Trade type for Jupiter mode'
+                        description: 'Trade qoute params by estimate'
                     }
                 ],
                 responses: {
@@ -190,43 +120,28 @@ export const swagger = {
                     {
                         name: 'tokenAddress',
                         in: 'query',
+                        required: true,
                         schema: {
                             type: 'string'
                         },
                         description: 'Token contract address'
                     },
                     {
-                        name: 'amount',
-                        in: 'query',
-                        required: true,
-                        schema: {
-                            type: 'number'
-                        },
-                        description: 'Amount to sell'
-                    },
-                    {
-                        name: 'minWsolAmount',
-                        in: 'query',
-                        schema: {
-                            type: 'number'
-                        },
-                        description: 'Minimum WSOL amount for FLIP_N mode'
-                    },
-                    {
-                        name: 'slip',
-                        in: 'query',
-                        schema: {
-                            type: 'number'
-                        },
-                        description: 'Slippage tolerance'
-                    },
-                    {
-                        name: 'tradeType',
+                        name: 'referralAddress',
                         in: 'query',
                         schema: {
                             type: 'string'
                         },
-                        description: 'Trade type for Jupiter mode'
+                        description: 'Referral address (optional)'
+                    },
+                    {
+                        name: 'params',
+                        in: 'query',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        },
+                        description: 'Trade qoute params by estimate'
                     }
                 ],
                 responses: {
@@ -276,6 +191,7 @@ export const swagger = {
                     {
                         name: 'tokenAddress',
                         in: 'query',
+                        required: true,
                         schema: {
                             type: 'string'
                         },
@@ -340,6 +256,24 @@ export const swagger = {
                 summary: 'Prepaid operation',
                 parameters: [
                     {
+                        name: 'owner',
+                        in: 'query',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        },
+                        description: 'Owner wallet address'
+                    },
+                    {
+                        name: 'tokenAddress',
+                        in: 'query',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        },
+                        description: 'Token contract address'
+                    },
+                    {
                         name: 'amount',
                         in: 'query',
                         required: true,
@@ -348,15 +282,7 @@ export const swagger = {
                         },
                         description: 'Amount to prepaid'
                     },
-                    {
-                        name: 'isCreate',
-                        in: 'query',
-                        schema: {
-                            type: 'boolean',
-                            default: false
-                        },
-                        description: 'Whether this is a create operation'
-                    }
+                  
                 ],
                 responses: {
                     '200': {
@@ -383,6 +309,24 @@ export const swagger = {
                 tags: ['Token Operations'],
                 summary: 'Withdraw SOL prepaid',
                 parameters: [
+                    {
+                        name: 'owner',
+                        in: 'query',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        },
+                        description: 'Owner wallet address'
+                    },
+                    {
+                        name: 'tokenAddress',
+                        in: 'query',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        },
+                        description: 'Token contract address'
+                    },
                 ],
                 responses: {
                     '200': {
@@ -409,6 +353,24 @@ export const swagger = {
                 tags: ['Token Operations'],
                 summary: 'Withdraw token prepaid',
                 parameters: [
+                    {
+                        name: 'owner',
+                        in: 'query',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        },
+                        description: 'Owner wallet address'
+                    },
+                    {
+                        name: 'tokenAddress',
+                        in: 'query',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        },
+                        description: 'Token contract address'
+                    },
                 ],
                 responses: {
                     '200': {
@@ -436,13 +398,54 @@ export const swagger = {
                 summary: 'Create token',
                 parameters: [
                     {
+                        name: 'owner',
+                        in: 'query',
+                        required: true,
+                        schema: {
+                            type: 'string'
+                        },
+                        description: 'Owner wallet address'
+                    },
+                    {
+                        name: 'tokenName',
+                        in: 'query',
+                        schema: {
+                            type: 'string'
+                        },
+                        description: 'Token name (optional)'
+                    },
+                    {
+                        name: 'tokenSymbol',
+                        in: 'query',
+                        schema: {
+                            type: 'string'
+                        },
+                        description: 'Token symbol (optional)'
+                    },
+                    {
+                        name: 'tokenDecimals',
+                        in: 'query',
+                        schema: {
+                            type: 'integer'
+                        },
+                        description: 'Token decimals (optional)'
+                    },
+                    {
+                        name: 'icon',
+                        in: 'query',
+                        schema: {
+                            type: 'string'
+                        },
+                        description: 'Token icon URL (optional)'
+                    },
+                    {
                         name: 'launching',
                         in: 'query',
                         schema: {
                             type: 'boolean',
                             default: false
                         },
-                        description: 'Whether in launching state'
+                        description: 'Whether this is a launching operation'
                     },
                     {
                         name: 'amount',
@@ -451,7 +454,7 @@ export const swagger = {
                             type: 'number',
                             default: 0
                         },
-                        description: 'Token amount'
+                        description: 'Amount to prepaid'
                     }
                 ],
                 responses: {

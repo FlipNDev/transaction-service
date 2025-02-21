@@ -581,14 +581,14 @@ export class FlipN {
             const result = poolToken
             .mul(_solAmount)
             .div(solToken.plus(_solAmount))
-            .toString();
+            .toFixed(0, 0);
             return result;
         } else {
             const _tokenAmount = new Big(inNumber).mul(1 - 0.015);
             const result = solToken
               .mul(_tokenAmount)
               .div(poolToken.plus(_tokenAmount))
-              .toString();
+              .toFixed(0, 0);
             return result;
         }
 

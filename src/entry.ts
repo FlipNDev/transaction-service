@@ -19,7 +19,7 @@ class Entry {
 
     }
 
-    init({
+    async init({
         owner,
         type,
         tokenName,
@@ -32,7 +32,7 @@ class Entry {
         this.type = type
         if (type === EntryType.FLIP_N) {
             this.flipN = new FlipN()
-            this.flipN.init({
+            await this.flipN.init({
                 owner,
                 tokenName,
                 tokenSymbol,
