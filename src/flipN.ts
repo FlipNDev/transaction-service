@@ -421,7 +421,7 @@ export class FlipN {
                 name: this.tokenName,
                 symbol: this.tokenSymbol,
                 uri: this.icon || "",
-                totalSupply: new anchor.BN(amount),
+                totalSupply: new anchor.BN(total_supply),
                 decimals: new anchor.BN(this.tokenDecimals)
             })
             .accounts({
