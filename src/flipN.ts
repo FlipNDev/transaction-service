@@ -408,7 +408,7 @@ export class FlipN {
         return transaction.serialize({ verifySignatures: false }).toString("base64")
     }
 
-    async createToken(launching: boolean = false, amount: number = 0) {
+    async createToken(launching: boolean = false, amount: number = 0): Promise<string | null> {
         const transaction = new Transaction();
 
         const keys = await this.getCreateKeys();
