@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "ts-node src/server.ts",
-    "test": "ts-node test/createTest.ts",
+    "test": "ts-node test/buyTest.ts",
     "build": "tsc",
     "watch": "tsc -w"
   },
