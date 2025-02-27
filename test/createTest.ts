@@ -25,8 +25,8 @@ async function test() {
    const flipN = new FlipN()
    await flipN.init({
     owner: sender.publicKey.toBase58(),
-    tokenName: 'tt01',
-    tokenSymbol: 'TT01',
+    tokenName: 'tt0111',
+    tokenSymbol: 'TT0121',
     tokenDecimals: 6,
     icon: 'test',
    })

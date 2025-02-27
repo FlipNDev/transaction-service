@@ -408,6 +408,7 @@ export const swagger = {
                     },
                     {
                         name: 'tokenName',
+                        required: true,
                         in: 'query',
                         schema: {
                             type: 'string'
@@ -416,6 +417,7 @@ export const swagger = {
                     },
                     {
                         name: 'tokenSymbol',
+                        required: true,
                         in: 'query',
                         schema: {
                             type: 'string'
@@ -424,6 +426,7 @@ export const swagger = {
                     },
                     {
                         name: 'tokenDecimals',
+                        required: true,
                         in: 'query',
                         schema: {
                             type: 'integer'
@@ -433,6 +436,7 @@ export const swagger = {
                     {
                         name: 'icon',
                         in: 'query',
+                        required: true,
                         schema: {
                             type: 'string'
                         },
