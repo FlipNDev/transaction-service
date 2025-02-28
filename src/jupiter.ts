@@ -20,7 +20,7 @@ export class Jupiter {
 
     async trade(amount: string, type: "sol" | "token" = "sol", slip: number) {
         const swapInfo = await this.estimate(amount, type);
-        const { swapTransaction } = await this.fetchSwapTransaction(slip, swapInfo);
+        const { swapTransaction } = await this.fetchSwapTransaction(Math.floor(slip * 100), swapInfo);
         return swapTransaction
     }
 
@@ -80,6 +80,8 @@ export class Jupiter {
             quoteResponse: swapInfo.quoteResponse
           };
         
+          console.log('requestBody: ', JSON.stringify(requestBody))
+
           const response = await fetch(`${API_PREFIX}/v6/swap`, {
             method: "POST",
             headers: {
@@ -88,7 +90,8 @@ export class Jupiter {
             body: JSON.stringify(requestBody)
           });
         
-          const { swapTransaction, lastValidBlockHeight }: any = await response.json();
-          return { swapTransaction, lastValidBlockHeight };
+          const data: any = await response.json();
+
+          return data;
     }
 }

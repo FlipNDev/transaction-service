@@ -214,12 +214,13 @@ class Entry {
             if (!this.jupiter) {
                 return null
             }
-            const amount = await this.jupiter.estimate(inNumber, inType)
+
+            const swapInfo = await this.jupiter.estimate(inNumber, inType)
 
             return {
-                estimateAmount: amount,
+                estimateAmount: swapInfo.quoteResponse.outAmount,
                 quote: {
-                    amount: amount,
+                    amount: inNumber,
                     type: inType,
                     slip
                 }
