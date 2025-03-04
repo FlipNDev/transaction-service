@@ -25,7 +25,7 @@ async function test() {
    const flipN = new FlipN()
    await flipN.init({
     owner: sender.publicKey.toBase58(),
-    tokenAddress: 'FsVw5rPNVQBgrmJtaUCDiyis9M8RfeKhk5wGEURA6iuJ',
+    tokenAddress: 'BKy43Ab4M4KjTU5V195GJkLTNjKiqQx8iS71N1XTxDyh',
    })
 
    const maxSol = 100000
@@ -33,11 +33,11 @@ async function test() {
    const tokenAmount: any = await flipN.estimate(maxSol, 'sol')
    console.log('params: ', tokenAmount)
 
-   const base64String = await flipN.buyToken(tokenAmount, maxSol)
+   const base64String = await flipN.buyToken(tokenAmount * (1 - 0.03), maxSol)
 
     // 从base64字符串转换成Transaction
-    // const base64String = "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAgSHZKOx6KVUKq0Q2720d6ZCfW2pyGMEj4GqxPk/mqEYbZ8vfdI4j4ILfFPnmrl4F1YxzdNQucGNYWgu4tZJSBe8YZotZSOZL6kGtCWsCmhVO2/HcB2m0cnl4KtCNcrFrPwoIhaW8w+ksjtWRCFWHCE6mX1S1Vjns2ZHRLlMyns49Cx+FOH9bXJ10zsAXzfwgl2oo1vNkgyun2PUN8Bg5GFnLyF2sli79DoSLsEUHqWPtnDWjO+9dRweFv8TXN7T4bXxL3SYGEKs6wWnDn6T0+zWLOIjs1XI22N52EqMdL9j/ADwyEVBv571jWVDCjHw2POoksEZ1c+CQAngHfYiuuuIt3PocUAxGS8FsLEyHgKBRP08IyWubTpZdkMlQShV8AkCEoPncUAakPTVV9VUWoHIAsibSQKyBQv0zvyQpc4QVcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEwAGxQooy1A0kTQunKT75V/6lyoX/37Q4dfdraUY903jJclj04kifG7PRApFI4NgwtaE5na/xCEBI572Nvp+FkFSlNamSkhBk0k6HFg2jh8fDW13bySu4HkH6hAQQVEjQtwZbHj0XxFOJ1Sf2sEw81YuGxzGqD9tUm20bwD+ClGBpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAEGp9UXGSxcUSGMyUw9SvF/WNruCJuh/UTj29mKAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCp0ujNlKuh6TnHnXme72FGJpZgqYO9CjUH/fZAIWJ/UI8ICwcJBAERDAAKV5Pxe2T0hK52AwAAAHR0ZQQAAABUVEUxPAAAAGh0dHBzOi8vZ2l0aHViLmNvbS9jcnlwdG9sb3V0cmUvZmV0Y2gtdG9rZW4tYW5kLWl0cy1tZXRhZGF0YQwGAAUEDwoRAAwGAAMEAQoRAAoCAAIMAgAAAAAAAAAAAAAAEQECARELDwkEBw8CBQgBAxEMAAoQDlcepyE9HV/nmAMAAAB0dGUEAAAAVFRFMTwAAABodHRwczovL2dpdGh1Yi5jb20vY3J5cHRvbG91dHJlL2ZldGNoLXRva2VuLWFuZC1pdHMtbWV0YWRhdGENAE57InR5cGUiOiJBZGRMYXVuY2hpbmciLCJ0b2tlbiI6IjlQd1paVU0xeXJCQkV0SGM1ZGJ4aEsxdzdTek1kRjJrQ0JNOHhnUzVIVlphIn0KAgAGDAIAAAAA4fUFAAAAAA=="; // 这里填入你的base64字符串
-    const serializedTransaction = Buffer.from(base64String!, 'base64');
+    const base64String2 = "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAYSjiH71n/IGO2UHWL7f1nlKfw+OoHR7cwWtznVtgKHQIgAWKOhKiulZbvqtDXwWt58Q0pr59wl+j73XIWdpOxg8RRETMnQ9bZP9byTMLo+g2xQ1cQ+Gqjyd4oub3v0G3kATJuOWe+PUGwWqEOzhW6hD1czeNfrufOKNVHLJTb1PRt1Pe4skA6g14tJK+NB/MBLTiIDL9is1qRuFYFwL7wA+sNw3b6TP5d+g/XHo5Pwdxk94CeCLL6aiQ1VQlUnWzxK3c+hxQDEZLwWwsTIeAoFE/TwjJa5tOll2QyVBKFXwCTrIcqGnZ12yuH+eZ9s9IQ7G76XFOIFU12tiHeGQFqoCeUlgEROirzpphaTJQTUUxMAS2u8hxoy/aRaBSMGAm3w+ct2kHMi+f/84KfxCfN1yQcKseiekhwu60xlSQaj5S/7BjBcdautS8wcvBgYphTV9CotGJQDkIOzsvQOMkU49ghKD53FAGpD01VfVVFqByALIm0kCsgUL9M78kKXOEFXAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABMABsUKKMtQNJE0Lpyk++Vf+pcqF/9+0OHX3a2lGPdN4yXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZmXCz0y/XrWyrpx6XqEF72vcCMBQnWO7s5KuNF0i3GgAGm4hX/quBhPtof2NGGMA12sQ53BrrO1WYoPAAAAAAAQbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpFw3kcx9xeNwrJMf91v+62JWMUur8h4d6J9ByN10qcUYDDAIABQwCAAAAoIYBAAAAAAARAQUBEQ0RCwYKCAkQBQEPBwQCAxEOAAxoin8OWyZXc2mghgEAAAAAAAAAjkOtbzhCAAAAAAAAAAAAAAAAAAAAAMSgY/PkhBBRdWzM1VI2v3aL+LKb1PAPLXOqnEUiVmtN5SWARE6KvOmmFpMlBNRTEwBLa7yHGjL9pFoFIwYCbfA="; // 这里填入你的base64字符串
+    const serializedTransaction = Buffer.from(base64String2, 'base64');
     const transaction = Transaction.from(serializedTransaction);
 
     // console.log('transaction: ', transaction)
@@ -47,6 +47,8 @@ async function test() {
 
     transaction.recentBlockhash = latestBlockhash!.blockhash;
     transaction.feePayer = sender.publicKey;
+
+    // console.log('transaction: ', transaction)
 
     const signature = await sendAndConfirmTransaction(connection, transaction, [sender], {
         skipPreflight: true,

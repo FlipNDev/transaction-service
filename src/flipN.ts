@@ -154,6 +154,7 @@ export class FlipN {
     }
 
     async buyToken(outputAmount: string | number, maxWsolAmount: string | number): Promise<string | null> {
+
         const keysAndIns = await this.getTradeKeysAndInstructions();
         if (!keysAndIns) {
             return null;

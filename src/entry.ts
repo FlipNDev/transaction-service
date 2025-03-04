@@ -2,6 +2,7 @@ import { PublicKey } from "@solana/web3.js"
 import { FlipN } from "./flipN"
 import { Pump } from "./pump"
 import { Jupiter } from "./jupiter"
+import Big from "big.js"
 
 
 enum EntryType {
@@ -69,7 +70,7 @@ class Entry {
             if (!this.flipN) {
                 return null
             }
-            return this.flipN.buyToken(params.outputAmount, params.maxWsolAmount)
+            return this.flipN.buyToken(new Big(params.outputAmount).mul(1 - Number(params.slip)).toFixed(0, 0), params.maxWsolAmount)
         }
 
         if (this.type === EntryType.PUMP) {
@@ -99,7 +100,7 @@ class Entry {
             if (!this.flipN) {
                 return null
             }
-            return this.flipN.sellToken(params.amount, params.minWsolAmount)
+            return this.flipN.sellToken(params.amount, new Big(params.minWsolAmount).mul(1 + Number(params.slip)).toFixed(0, 0))
         }
 
         if (this.type === EntryType.PUMP) {
@@ -169,8 +170,9 @@ class Entry {
                 return {
                     estimateAmount: amount,
                     quote: {
-                        outputAmount: inNumber,
-                        maxWsolAmount: amount
+                        outputAmount: amount,
+                        maxWsolAmount: inNumber,
+                        slip,
                     }
 
                 }
@@ -179,7 +181,8 @@ class Entry {
                     estimateAmount: amount,
                     quote: {
                         amount: inNumber,
-                        minWsolAmount: amount
+                        minWsolAmount: amount,
+                        slip
                     }
                 }
             }
