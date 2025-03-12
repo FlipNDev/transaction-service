@@ -98,6 +98,9 @@ export class FlipN {
     }: { owner: string, tokenName?: string, tokenSymbol?: string, tokenDecimals?: number, tokenAddress?: string, icon?: string, referralAddress?: string }) {
         this.owner = new PublicKey(owner)
         if (tokenAddress) {
+
+            console.log('tokenAddress', tokenAddress)
+
             this.tokenAddress = new PublicKey(tokenAddress)
             const metaplex = Metaplex.make(FlipN.connection);
             const metadataAccount = await metaplex
