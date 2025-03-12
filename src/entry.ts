@@ -156,6 +156,8 @@ class Entry {
     }
 
     async estimate(inNumber: number, inType: 'sol' | 'token', slip: number = 0.03): Promise<any> {
+        console.log('estimate', inNumber, inType, slip)
+
         if (!this.type) {
             return null
         }
@@ -164,9 +166,13 @@ class Entry {
                 return null
             }
 
+            console.log('estimate flipN')
+
             const amount = await this.flipN.estimate(inNumber, inType)
 
             if (inType === 'sol') {
+
+                console.log('estimate flipN sol', amount)
                 return {
                     estimateAmount: amount,
                     quote: {
