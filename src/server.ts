@@ -63,6 +63,9 @@ app.get('/api/sell', async (req, res) => {
 // 预估接口
 app.get('/api/estimate', async (req, res) => {
     try {
+
+        console.log('estimate')
+        
         const { owner, type, tokenAddress, tokenName, tokenSymbol, tokenDecimals, icon, referralAddress } = req.query;
         const { inNumber, inType, slip } = req.query;
 
