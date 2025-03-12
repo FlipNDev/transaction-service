@@ -107,6 +107,8 @@ export class FlipN {
                 .nfts()
                 .findByMint({ mintAddress: this.tokenAddress });
     
+            console.log('metadataAccount', metadataAccount)
+
             if (!metadataAccount) {
                 throw 'metadataAccount not found'
             }
@@ -115,6 +117,8 @@ export class FlipN {
             this.tokenSymbol = metadataAccount.symbol
             this.tokenDecimals = metadataAccount.mint.decimals
             this.icon = metadataAccount.uri
+
+
 
         } else {
             if (!tokenName || !tokenSymbol || !tokenDecimals || !icon) {
@@ -126,6 +130,7 @@ export class FlipN {
             this.icon = icon
         }
         
+        console.log('init program', FlipN.programId, FlipN)
         
         this.program = new Program<any>(idl, FlipN.programId, {
             connection: FlipN.connection
