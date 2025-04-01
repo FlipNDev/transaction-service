@@ -64,8 +64,6 @@ app.get('/api/sell', async (req, res) => {
 app.get('/api/estimate', async (req, res) => {
     try {
 
-        console.log('estimate')
-
         const { owner, type, tokenAddress } = req.query;
         const { inNumber, inType, slip } = req.query;
 
@@ -80,8 +78,6 @@ app.get('/api/estimate', async (req, res) => {
             icon: undefined,
             referralAddress: undefined
         });
-
-        console.log('estimate init')
 
         const result = await entry.estimate(
             Number(inNumber),

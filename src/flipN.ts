@@ -34,7 +34,7 @@ import { setGlobalDispatcher, ProxyAgent } from 'undici';
 
 import dotenv from 'dotenv';
 
-dotenv.config();    
+dotenv.config();
 
 import idl from "./idl/meme_launchpad.json";
 
@@ -85,7 +85,7 @@ export class FlipN {
     // @ts-ignore
     tokenAddress: PublicKey | null = null;
 
-    constructor() {}
+    constructor() { }
 
     async init({
         owner,
@@ -98,16 +98,11 @@ export class FlipN {
     }: { owner: string, tokenName?: string, tokenSymbol?: string, tokenDecimals?: number, tokenAddress?: string, icon?: string, referralAddress?: string }) {
         this.owner = new PublicKey(owner)
         if (tokenAddress) {
-
-            console.log('tokenAddress', tokenAddress)
-
             this.tokenAddress = new PublicKey(tokenAddress)
             const metaplex = Metaplex.make(FlipN.connection);
             const metadataAccount = await metaplex
                 .nfts()
                 .findByMint({ mintAddress: this.tokenAddress });
-    
-            console.log('metadataAccount', metadataAccount)
 
             if (!metadataAccount) {
                 throw 'metadataAccount not found'
@@ -118,8 +113,6 @@ export class FlipN {
             this.tokenDecimals = metadataAccount.mint.decimals
             this.icon = metadataAccount.uri
 
-
-
         } else {
             if (!tokenName || !tokenSymbol || !tokenDecimals || !icon) {
                 throw 'tokenName, tokenSymbol, tokenDecimals and icon are required'
@@ -129,9 +122,9 @@ export class FlipN {
             this.tokenDecimals = tokenDecimals
             this.icon = icon
         }
-        
+
         console.log('init program', FlipN.programId, FlipN)
-        
+
         this.program = new Program<any>(idl, FlipN.programId, {
             connection: FlipN.connection
         } as any);
@@ -287,11 +280,17 @@ export class FlipN {
         }
 
         const prepaidInstruction = await this.program.methods
-            .prepaid(new anchor.BN(amount))
+            .prepaid({
+                amount: new anchor.BN(amount),
+                recommender: this.referral,
+                proxy: keys.proxySolAccount
+            })
             .accounts({
                 ...keys,
                 paidRecord: paidRecord,
-                protocolWsolAccount: protocolSolAccount.address
+                protocolWsolAccount: protocolSolAccount.address,
+                referralWsolAccount: keys.referralSolAccount,
+                proxyWsolAccount: keys.proxySolAccount,
             })
             .instruction();
 
@@ -532,7 +531,7 @@ export class FlipN {
 
         let lamports = 0;
         if (amount && Number(amount) > 0) {
-            lamports += Number(amount);
+            lamports += (Number(amount) + (0.003 * (10 ** 9)));
         }
 
         const instruction1 = SystemProgram.transfer({
@@ -556,7 +555,7 @@ export class FlipN {
             const memoInstruction = new TransactionInstruction({
                 keys: [],
                 programId: memoProgramId,
-                data: Buffer.from(JSON.stringify({"type":"AddLaunching", "token": keys.tokenInfo.toBase58()})),
+                data: Buffer.from(JSON.stringify({ "type": "AddLaunching", "token": keys.tokenInfo.toBase58() })),
             });
             const transferSOLInstruction = SystemProgram.transfer({
                 fromPubkey: this.owner,
@@ -588,20 +587,19 @@ export class FlipN {
         if (inType === 'sol') {
             const _solAmount = new Big(inNumber).mul(1 - 0.01);
             const result = poolToken
-            .mul(_solAmount)
-            .div(solToken.plus(_solAmount))
-            .toFixed(0, 0);
+                .mul(_solAmount)
+                .div(solToken.plus(_solAmount))
+                .toFixed(0, 0);
             return result;
         } else {
             const _tokenAmount = new Big(inNumber).mul(1 - 0.015);
             const result = solToken
-              .mul(_tokenAmount)
-              .div(poolToken.plus(_tokenAmount))
-              .toFixed(0, 0);
+                .mul(_tokenAmount)
+                .div(poolToken.plus(_tokenAmount))
+                .toFixed(0, 0);
             return result;
         }
 
-        return 0
     }
 
     private async getTradeKeysAndInstructions() {
