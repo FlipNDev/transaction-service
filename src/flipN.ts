@@ -193,6 +193,14 @@ export class FlipN {
 
         tx.add(instruction1).add(instruction2).add(buyInstruction);
 
+        const closeUseSolIns = createCloseAccountInstruction(
+            keys.userWsolAccount,
+            this.owner,
+            this.owner
+        );
+
+        tx.add(closeUseSolIns);
+
         const latestBlockhash = await FlipN.connection.getLatestBlockhash();
         tx.feePayer = this.owner;
         tx.recentBlockhash = latestBlockhash!.blockhash;
@@ -235,6 +243,22 @@ export class FlipN {
         );
 
         tx.add(closeUseSolIns);
+
+        const userToken = await getAccount(
+            FlipN.connection,
+            keys.userTokenAccount,
+            undefined,
+            TOKEN_PROGRAM_ID
+        );
+
+        if (Number(userToken.amount) === Number(amount)) {
+            const closeTokenIns = createCloseAccountInstruction(
+                keys.userTokenAccount, // token account which you want to close
+                this.owner, // destination
+                this.owner // owner of token account
+            );
+            tx.add(closeTokenIns);
+        }
 
         const latestBlockhash = await FlipN.connection.getLatestBlockhash();
         tx.feePayer = this.owner;
